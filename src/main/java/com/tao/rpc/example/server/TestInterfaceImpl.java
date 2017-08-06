@@ -70,13 +70,13 @@ public class TestInterfaceImpl implements TestInterface {
 	public String methodDelayOneSecond() {
 
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return "方法延迟1s, 现在正常返回!";
+		return "方法延迟3s, 现在正常返回!";
 	}
 
 	@Override

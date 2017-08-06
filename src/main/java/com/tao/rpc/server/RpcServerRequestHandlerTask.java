@@ -24,9 +24,13 @@ public class RpcServerRequestHandlerTask implements Runnable {
 	private RpcInvokeHook rpcInvokeHook;
 	private BlockingQueue<RpcRequestWrapper> requestQueue;
 	private RpcRequestWrapper rpcRequestWrapper;
-	
+
+	//reflectasm提供的asm工具类，可以实现比java反射更快的性能
 	private MethodAccess methodAccess;
+
+	//上一个被调用的方法的名称
 	private String lastMethodName = "";
+	//上一个被调用的方法的index, 因为asm生成的访问类会将方法
 	private int lastMethodIndex;
 	
 	
@@ -41,8 +45,9 @@ public class RpcServerRequestHandlerTask implements Runnable {
 		this.serviceProvider = serviceProvider;
 		this.rpcInvokeHook = rpcInvokeHook;
 		this.requestQueue = requestQueue;
-		
-		methodAccess = MethodAccess.get(this.interfaceClass);
+
+		//通过reflectasm提供的MethodAccess类的静态方法生成接口的访问类methodAccess
+		this.methodAccess = MethodAccess.get(this.interfaceClass);
 	}
 
 
@@ -69,6 +74,11 @@ public class RpcServerRequestHandlerTask implements Runnable {
 				//进行实际的方法调用，并获得结果
 				Object result = null;
 				if(!methodName.equals(lastMethodName)) {
+                    /**
+                     * 注意：
+                     * 在重复访问方法或者属性的时候，最好通过缓存索引来提取方法或者属性，
+                     * 这样能够提高重复访问的性能。
+                     */
 					lastMethodIndex = methodAccess.getIndex(methodName);
 					lastMethodName = methodName;
 				}

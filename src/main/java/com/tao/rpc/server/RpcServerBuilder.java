@@ -11,8 +11,8 @@ import com.tao.rpc.aop.RpcInvokeHook;
 
 public class RpcServerBuilder {
 	
-	private Class<?> interfaceClass;
-	private Object serviceProvider;
+	private Class<?> interfaceClass;    // 对客户端提供服务的类所实现的接口
+	private Object serviceProvider;     // 服务的具体提供类
 	
 	private int port;
 	private int threads;

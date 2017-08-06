@@ -26,7 +26,7 @@ public class RpcClientProxyBuilder {
 		
 		private String host;	//主机
 		private int port;		//端口号
-		private long timeoutMills = 0;	//超时时间(毫秒)
+		private long timeoutMills = 0;	//异步等待的超时时间(毫秒)
 		private RpcInvokeHook rpcInvokeHook = null;	//AOP钩子
 		private int threads;	//处理请求的线程数量
 		
@@ -130,7 +130,9 @@ public class RpcClientProxyBuilder {
 		public RpcClientAsyncProxy buildAsyncProxy() {
 			if(threads <= 0)
 				threads = Runtime.getRuntime().availableProcessors();
-			
+
+			//异步代理中，每一次向服务器发送方法调用的请求, 需要新开一个客户端连接!!
+			//因为前一个客户端连接不一定获得了返回结果，因此最好不要在一个连接中发送.
 			rpcClient = new RpcClient(host, port, timeoutMills, rpcInvokeHook, threads);
 			rpcClient.connect();
 			

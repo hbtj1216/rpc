@@ -70,7 +70,7 @@ public class RpcClient implements InvocationHandler {
 		
 		this.host = host;
 		this.port = port;
-		this.timeoutMills = timeoutMills;
+		this.timeoutMills = timeoutMills;	//异步等待的超时时间
 		this.rpcInvokeHook = rpcInvokeHook;
 		
 		//处理RpcResponse的对象

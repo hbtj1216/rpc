@@ -37,7 +37,7 @@ public class FunctionsTest {
 	private static RpcClientAsyncProxy 	asyncProxy;		//异步代理
 	
 	private static final int THREADS = 16; 		// 线程数
-	private static final int TIMEOUT = 3000;
+	private static final int TIMEOUT = 5000;    //异步等待的超时时间
 	private static final String HOST = "127.0.0.1";
 	private static final int PORT = 4399;
 	private static RpcInvokeHook hook;
@@ -189,15 +189,26 @@ public class FunctionsTest {
 	public static void main(String[] args) throws Exception {
 			
 		FunctionsTest test = new FunctionsTest();
-		
+
+
+        /**
+         * 同步代理中, 客户端只发起了一次服务器连接, 返回动态代理对象。
+         */
+
 		InfoPrinter.println("同步代理测试开始...");
 		test.syncTest();
 		InfoPrinter.println("同步代理测试结束...");
 
 
-		InfoPrinter.println("异步代理测试开始...");
-		test.asyncTest();
-		InfoPrinter.println("异步代理测试结束...");
+        /**
+         * 异步代理中，客户端每次方法请求都发起一次新的连接。
+         */
+
+		/*InfoPrinter.println("异步代理测试开始...");
+		for(int i = 0; i < 5; i++) {
+            test.asyncTest();
+        }
+		InfoPrinter.println("异步代理测试结束...");*/
 			
 	}
 	
