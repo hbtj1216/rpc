@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import com.tao.rpc.aop.RpcInvokeHook;
-import com.tao.rpc.context.RpcRequestWrapper;
+import com.tao.rpc.domain.RpcRequestWrapper;
 
 /**
  * RpcServer端，对收到的RpcRequest进行处理的handler。
@@ -47,7 +47,7 @@ public class RpcServerRequestHandler {
 	public void start() {
 		threadPool = Executors.newFixedThreadPool(threads);
 		for(int i = 0; i < threads; i++) {
-			threadPool.execute(new RpcServerRequestHandlerRunnable(interfaceClass, 
+			threadPool.execute(new RpcServerRequestHandlerTask(interfaceClass,
 					serviceProvider, rpcInvokeHook, requestQueue));
 		}
 	}

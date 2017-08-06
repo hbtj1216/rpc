@@ -190,10 +190,11 @@ public class FunctionsTest {
 			
 		FunctionsTest test = new FunctionsTest();
 		
-		/*InfoPrinter.println("同步代理测试开始...");
+		InfoPrinter.println("同步代理测试开始...");
 		test.syncTest();
-		InfoPrinter.println("同步代理测试结束...");*/
-		
+		InfoPrinter.println("同步代理测试结束...");
+
+
 		InfoPrinter.println("异步代理测试开始...");
 		test.asyncTest();
 		InfoPrinter.println("异步代理测试结束...");

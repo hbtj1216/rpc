@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.tao.rpc.aop.RpcInvokeHook;
-import com.tao.rpc.context.RpcRequest;
+import com.tao.rpc.domain.RpcRequest;
 import com.tao.rpc.future.RpcFuture;
 import com.tao.rpc.netty.NettyKryoDecoder;
 import com.tao.rpc.netty.NettyKryoEncoder;
@@ -231,11 +231,11 @@ public class RpcClient implements InvocationHandler {
 	 * @param args
 	 * @return
 	 */
-	public RpcFuture call(String methodName, Object ...args) {
+	public RpcFuture call(String methodName, Object[] args) {
 			
 		//1、首先需要在客户端本地注册RpcFuture
 		RpcFuture rpcFuture = new RpcFuture();
-		int id = invokeIdGenerator.addAndGet(1);	//分配id
+		int id = invokeIdGenerator.addAndGet(1);	    //分配id
 		rpcClientResponseHandler.register(id, rpcFuture);	//先注册RpcFuture
 		
 		//2、生成请求体，并发送给服务器

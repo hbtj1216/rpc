@@ -3,7 +3,7 @@ package com.tao.rpc.client;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentMap;
 
-import com.tao.rpc.context.RpcResponse;
+import com.tao.rpc.domain.RpcResponse;
 import com.tao.rpc.future.RpcFuture;
 
 /**

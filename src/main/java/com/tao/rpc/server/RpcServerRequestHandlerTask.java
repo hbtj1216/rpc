@@ -4,8 +4,8 @@ import java.util.concurrent.BlockingQueue;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
 import com.tao.rpc.aop.RpcInvokeHook;
-import com.tao.rpc.context.RpcRequestWrapper;
-import com.tao.rpc.context.RpcResponse;
+import com.tao.rpc.domain.RpcRequestWrapper;
+import com.tao.rpc.domain.RpcResponse;
 
 import io.netty.channel.Channel;
 
@@ -17,7 +17,7 @@ import io.netty.channel.Channel;
  *
  */
 
-public class RpcServerRequestHandlerRunnable implements Runnable {
+public class RpcServerRequestHandlerTask implements Runnable {
 	
 	private Class<?> interfaceClass;
 	private Object serviceProvider;
@@ -31,7 +31,7 @@ public class RpcServerRequestHandlerRunnable implements Runnable {
 	
 	
 	//构造函数	
-	public RpcServerRequestHandlerRunnable(
+	public RpcServerRequestHandlerTask(
 				Class<?> interfaceClass, 
 				Object serviceProvider,
 				RpcInvokeHook rpcInvokeHook, 
@@ -66,7 +66,7 @@ public class RpcServerRequestHandlerRunnable implements Runnable {
 					rpcInvokeHook.beforeInvoke(methodName, args);
 				}
 				
-				//进行实际的方法调用，病获得结果
+				//进行实际的方法调用，并获得结果
 				Object result = null;
 				if(!methodName.equals(lastMethodName)) {
 					lastMethodIndex = methodAccess.getIndex(methodName);

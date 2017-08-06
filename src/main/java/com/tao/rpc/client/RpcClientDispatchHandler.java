@@ -1,6 +1,6 @@
 package com.tao.rpc.client;
 
-import com.tao.rpc.context.RpcResponse;
+import com.tao.rpc.domain.RpcResponse;
 import com.tao.rpc.utils.InfoPrinter;
 
 import io.netty.channel.ChannelHandlerContext;

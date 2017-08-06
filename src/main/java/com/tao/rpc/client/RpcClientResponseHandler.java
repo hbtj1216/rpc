@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import com.tao.rpc.context.RpcResponse;
+import com.tao.rpc.domain.RpcResponse;
 import com.tao.rpc.future.RpcFuture;
 
 /**
@@ -21,9 +21,9 @@ import com.tao.rpc.future.RpcFuture;
 public class RpcClientResponseHandler {
 	
 	//创建一个LinkedBlockingDeque来保存所有的RpcResponse，做为任务队列。
-	private BlockingQueue<RpcResponse> responseQueue = new LinkedBlockingDeque<RpcResponse>();
+	private BlockingQueue<RpcResponse> responseQueue = new LinkedBlockingDeque<>();
 	//创建一个ConcurrentHashMap来保存每个RpcRequest对应的id和结果RpcFuture。
-	private ConcurrentMap<Integer, RpcFuture> invokeIdRpcFutureMap = new ConcurrentHashMap<Integer, RpcFuture>();
+	private ConcurrentMap<Integer, RpcFuture> invokeIdRpcFutureMap = new ConcurrentHashMap<>();
 	//线程池。
 	private ExecutorService threadPool;	
 	

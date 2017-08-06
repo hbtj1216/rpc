@@ -95,7 +95,8 @@ public class RpcServerBuilder {
 		}
 		
 		//创建RpcServer对象
-		RpcServer rpcServer = new RpcServer(this.interfaceClass, this.serviceProvider, this.port, this.threads, this.rpcInvokeHook);
+		RpcServer rpcServer = new RpcServer(this.interfaceClass, this.serviceProvider,
+											this.port, this.threads, this.rpcInvokeHook);
 		
 		return rpcServer;
 	} 

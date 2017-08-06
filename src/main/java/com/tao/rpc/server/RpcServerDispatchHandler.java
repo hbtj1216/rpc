@@ -1,7 +1,7 @@
 package com.tao.rpc.server;
 
-import com.tao.rpc.context.RpcRequest;
-import com.tao.rpc.context.RpcRequestWrapper;
+import com.tao.rpc.domain.RpcRequest;
+import com.tao.rpc.domain.RpcRequestWrapper;
 import com.tao.rpc.utils.InfoPrinter;
 
 import io.netty.channel.ChannelHandlerContext;
