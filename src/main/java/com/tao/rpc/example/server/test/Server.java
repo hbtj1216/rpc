@@ -1,9 +1,11 @@
 package com.tao.rpc.example.server.test;
 
+import com.tao.rpc.aop.RpcInvokeHook;
 import com.tao.rpc.example.server.TestInterface;
 import com.tao.rpc.example.server.TestInterfaceImpl;
 import com.tao.rpc.server.RpcServer;
 import com.tao.rpc.server.RpcServerBuilder;
+import com.tao.rpc.utils.InfoPrinter;
 
 /**
  * Rpc的Server服务器。
@@ -13,7 +15,26 @@ import com.tao.rpc.server.RpcServerBuilder;
  */
 
 public class Server {
-	
+
+
+	//钩子
+	private static RpcInvokeHook hook;
+
+
+	static {
+	    hook = new RpcInvokeHook() {
+            @Override
+            public void beforeInvoke(String methodName, Object[] args) {
+                InfoPrinter.println(methodName + " 被调用.");
+            }
+
+            @Override
+            public void afterInvoke(String methodName, Object[] args) {
+                InfoPrinter.println(methodName + " 调用完毕.");
+            }
+        };
+    }
+
 	
 	/**
 	 * 启动RPC服务器
@@ -27,6 +48,7 @@ public class Server {
 		RpcServer rpcServer = RpcServerBuilder.create()
 								.setServiceInterface(TestInterface.class)
 								.setServiceProvider(serviceProvider)
+                                .setHook(hook)
 								.setThreads(4)
 								.bind(4399)
 								.build();

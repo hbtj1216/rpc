@@ -19,7 +19,7 @@ public interface TestInterface {
 	public void methodThrowException();
 	public void methodTimeout();
 	public void methodReturnVoid();
-	public String methodDelayOneSecond();
+	public String methodDelaySomeSecond();
 	public int methodForMultiThread(int threads);
 	public String methodForPerformance();
 }

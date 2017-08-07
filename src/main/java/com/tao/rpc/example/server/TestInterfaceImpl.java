@@ -67,7 +67,7 @@ public class TestInterfaceImpl implements TestInterface {
 	}
 
 	@Override
-	public String methodDelayOneSecond() {
+	public String methodDelaySomeSecond() {
 
 		try {
 			Thread.sleep(3000);

@@ -125,7 +125,7 @@ public class FunctionsTest {
 		Thread.sleep(2000);
 		System.out.print("\n");
 		InfoPrinter.println("=============================");
-		String result = syncProxy.methodDelayOneSecond();
+		String result = syncProxy.methodDelaySomeSecond();
 		InfoPrinter.println("返回值(List<String>): " + result);
 		InfoPrinter.println("=============================");
 		
@@ -149,7 +149,7 @@ public class FunctionsTest {
 		final CountDownLatch countDownLatch = new CountDownLatch(1);
 		
 		//异步调用
-		RpcFuture rpcFuture = asyncProxy.call("methodDelayOneSecond");
+		RpcFuture rpcFuture = asyncProxy.call("methodDelaySomeSecond");
 		while(rpcFuture == null) {
 			Thread.sleep(200);
 		}
@@ -167,7 +167,7 @@ public class FunctionsTest {
 			}
 		});
 		
-		if(!countDownLatch.await(2000, TimeUnit.MILLISECONDS)) {
+		if(!countDownLatch.await(5000, TimeUnit.MILLISECONDS)) {
 			//超时
 			InfoPrinter.println("没能监听到返回的rpcFuture");
 		}
@@ -195,20 +195,20 @@ public class FunctionsTest {
          * 同步代理中, 客户端只发起了一次服务器连接, 返回动态代理对象。
          */
 
-		InfoPrinter.println("同步代理测试开始...");
+		/*InfoPrinter.println("同步代理测试开始...");
 		test.syncTest();
-		InfoPrinter.println("同步代理测试结束...");
+		InfoPrinter.println("同步代理测试结束...");*/
 
 
         /**
          * 异步代理中，客户端每次方法请求都发起一次新的连接。
          */
 
-		/*InfoPrinter.println("异步代理测试开始...");
+		InfoPrinter.println("异步代理测试开始...");
 		for(int i = 0; i < 5; i++) {
             test.asyncTest();
         }
-		InfoPrinter.println("异步代理测试结束...");*/
+		InfoPrinter.println("异步代理测试结束...");
 			
 	}
 	

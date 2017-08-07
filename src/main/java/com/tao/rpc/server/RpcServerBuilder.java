@@ -77,7 +77,7 @@ public class RpcServerBuilder {
 	 * @param rpcInvokeHook
 	 * @return
 	 */
-	public RpcServerBuilder hook(RpcInvokeHook rpcInvokeHook) {
+	public RpcServerBuilder setHook(RpcInvokeHook rpcInvokeHook) {
 		this.rpcInvokeHook = rpcInvokeHook;
 		return this;
 	}

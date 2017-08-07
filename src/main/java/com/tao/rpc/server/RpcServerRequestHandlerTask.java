@@ -19,10 +19,10 @@ import io.netty.channel.Channel;
 
 public class RpcServerRequestHandlerTask implements Runnable {
 	
-	private Class<?> interfaceClass;
-	private Object serviceProvider;
-	private RpcInvokeHook rpcInvokeHook;
-	private BlockingQueue<RpcRequestWrapper> requestQueue;
+	private Class<?> interfaceClass;			//接口
+	private Object serviceProvider;				//接口的实现类
+	private RpcInvokeHook rpcInvokeHook;		//AOP钩子
+	private BlockingQueue<RpcRequestWrapper> requestQueue;	//请求任务的阻塞队列
 	private RpcRequestWrapper rpcRequestWrapper;
 
 	//reflectasm提供的asm工具类，可以实现比java反射更快的性能
@@ -30,7 +30,7 @@ public class RpcServerRequestHandlerTask implements Runnable {
 
 	//上一个被调用的方法的名称
 	private String lastMethodName = "";
-	//上一个被调用的方法的index, 因为asm生成的访问类会将方法
+	//上一个被调用的方法的index, 因为asm生成的访问类会将方法缓存起来，可以通过索引获取
 	private int lastMethodIndex;
 	
 	
@@ -46,7 +46,7 @@ public class RpcServerRequestHandlerTask implements Runnable {
 		this.rpcInvokeHook = rpcInvokeHook;
 		this.requestQueue = requestQueue;
 
-		//通过reflectasm提供的MethodAccess类的静态方法生成接口的访问类methodAccess
+		//通过reflectasm提供的MethodAccess类的静态方法生成接口的访问类对象methodAccess
 		this.methodAccess = MethodAccess.get(this.interfaceClass);
 	}
 
