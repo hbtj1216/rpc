@@ -35,8 +35,8 @@ public class RpcServer {
 	private int threads;	//服务器端处理请求的线程池中的线程数
 	private RpcInvokeHook rpcInvokeHook;	//钩子
 	
-	//RpcRequest的处理者
-	private RpcServerRequestHandler rpcServerRequestHandler; 
+	//RpcRequest的请求分发器
+	private RpcServerRequestDispatcher rpcServerRequestDispatcher;
 	
 	
 	//构造函数
@@ -54,11 +54,11 @@ public class RpcServer {
 		this.threads = threads;
 		this.rpcInvokeHook = rpcInvokeHook;
 		
-		//创建RpcServerRequestHandler对象，开启新的线程
-		rpcServerRequestHandler = new RpcServerRequestHandler(this.interfaceClass, 
+		//创建rpcServerRequestDispatcher对象，开启新的线程
+		rpcServerRequestDispatcher = new RpcServerRequestDispatcher(this.interfaceClass,
 				this.serviceProvider, this.threads, this.rpcInvokeHook);
 		
-		rpcServerRequestHandler.start();
+		rpcServerRequestDispatcher.start();
 	}
 	
 	
@@ -84,7 +84,7 @@ public class RpcServer {
 							
 							pipeline.addLast("Decoder", new NettyKryoDecoder());	//解码器
 							pipeline.addLast("RpcServerDispacherHandler", 
-									new RpcServerDispatchHandler(rpcServerRequestHandler));
+									new RpcServerRequestHandler(rpcServerRequestDispatcher));
 							pipeline.addLast("Encoder", new NettyKryoEncoder());
 						}
 					});

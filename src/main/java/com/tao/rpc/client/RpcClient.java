@@ -41,7 +41,7 @@ public class RpcClient implements InvocationHandler {
 	private RpcInvokeHook rpcInvokeHook = null;		//AOP钩子
 	
 	//rpc调用返回的RpcResponse的处理对象
-	private RpcClientResponseHandler rpcClientResponseHandler;
+	private RpcClientDispatcherHandler rpcClientDispatcherHandler;
 	
 	//AtomicInteger对象，用于为每个rpc调用生成唯一的id
 	private AtomicInteger invokeIdGenerator = new AtomicInteger(0);
@@ -74,7 +74,7 @@ public class RpcClient implements InvocationHandler {
 		this.rpcInvokeHook = rpcInvokeHook;
 		
 		//处理RpcResponse的对象
-		rpcClientResponseHandler = new RpcClientResponseHandler(threads);
+		rpcClientDispatcherHandler = new RpcClientDispatcherHandler(threads);
 		
 		//创建监听连接断开的监听者对象
 		rpcClientChannelInactiveListener = new RpcClientChannelInactiveListener() {
@@ -116,8 +116,8 @@ public class RpcClient implements InvocationHandler {
 							ChannelPipeline pipeline = ch.pipeline();
 							
 							pipeline.addLast("Decoder", new NettyKryoDecoder());	//解码器
-							pipeline.addLast("RpcClientDispatchHandler", 
-									new RpcClientDispatchHandler(rpcClientResponseHandler, 
+							pipeline.addLast("RpcClientResponseHandler",
+									new RpcClientResponseHandler(rpcClientDispatcherHandler,
 											rpcClientChannelInactiveListener));
 							pipeline.addLast("Encoder", new NettyKryoEncoder());	//编码器
 						}
@@ -236,7 +236,7 @@ public class RpcClient implements InvocationHandler {
 		//1、首先需要在客户端本地注册RpcFuture
 		RpcFuture rpcFuture = new RpcFuture();
 		int id = invokeIdGenerator.addAndGet(1);	    //分配id
-		rpcClientResponseHandler.register(id, rpcFuture);	//先注册RpcFuture
+		rpcClientDispatcherHandler.register(id, rpcFuture);	//先注册RpcFuture
 		
 		//2、生成请求体，并发送给服务器
 		RpcRequest rpcRequest = new RpcRequest(id, methodName, args);
@@ -282,8 +282,8 @@ public class RpcClient implements InvocationHandler {
 
 
 
-	public RpcClientResponseHandler getRpcClientResponseHandler() {
-		return rpcClientResponseHandler;
+	public RpcClientDispatcherHandler getRpcClientDispatcherHandler() {
+		return rpcClientDispatcherHandler;
 	}
 
 

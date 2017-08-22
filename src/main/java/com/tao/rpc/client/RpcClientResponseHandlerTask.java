@@ -14,13 +14,13 @@ import com.tao.rpc.future.RpcFuture;
  *
  */
 
-public class RpcClientResponseHandlerRunnable implements Runnable {
+public class RpcClientResponseHandlerTask implements Runnable {
 	
 	private BlockingQueue<RpcResponse> responseQueue;				//阻塞任务队列
 	private ConcurrentMap<Integer, RpcFuture> invokeIdRpcFutureMap;	//RpcFuture注册表
 	
 	//构造函数
-	public RpcClientResponseHandlerRunnable(
+	public RpcClientResponseHandlerTask(
 			BlockingQueue<RpcResponse> responseQueue,
 			ConcurrentMap<Integer, RpcFuture> invokeIdRpcFutureMap) {
 		

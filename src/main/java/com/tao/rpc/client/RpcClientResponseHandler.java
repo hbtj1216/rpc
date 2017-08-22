@@ -1,65 +1,74 @@
 package com.tao.rpc.client;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
-
 import com.tao.rpc.domain.RpcResponse;
-import com.tao.rpc.future.RpcFuture;
+import com.tao.rpc.utils.InfoPrinter;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 
 /**
- * RpcClient远程调用之后，获得服务器返回的RpcResponse。
- * 成功返回，对RpcResponse的处理交由RpcClientResponseHandler完成。
- * RpcClientResponseHandler中会启动一个线程池，执行的任务定义在RpcClientResponseHandlerRunnable中。
+ * RpcClient客户端的业务处理类。
+ * 每一个连接的建立对应产生一个RpcClientResponseHandler对象，占用一个线程。
  * @author Tao
  *
  */
 
-public class RpcClientResponseHandler {
+public class RpcClientResponseHandler extends ChannelInboundHandlerAdapter {
 	
-	//创建一个LinkedBlockingDeque来保存所有的RpcResponse，做为任务队列。
-	private BlockingQueue<RpcResponse> responseQueue = new LinkedBlockingDeque<>();
-	//创建一个ConcurrentHashMap来保存每个RpcRequest对应的id和结果RpcFuture。
-	private ConcurrentMap<Integer, RpcFuture> invokeIdRpcFutureMap = new ConcurrentHashMap<>();
-	//线程池。
-	private ExecutorService threadPool;	
+	//客户端的RpcResponse处理对象的引用
+	private RpcClientDispatcherHandler rpcClientDispatcherHandler;
+	//连接断开的监听者
+	private RpcClientChannelInactiveListener rpcClientChannelInactiveListener = null;
 	
 	
-	public RpcClientResponseHandler(int threads) {
-		//在构造函数中初始化线程池,需要指定线程池中线程的数量
-		//启动线程池
-		this.threadPool = Executors.newFixedThreadPool(threads);
-		for(int i = 0; i < threads; i++) {
-			threadPool.execute(new RpcClientResponseHandlerRunnable(responseQueue, invokeIdRpcFutureMap));
+	//构造函数
+	public RpcClientResponseHandler(
+			RpcClientDispatcherHandler rpcClientDispatcherHandler,
+			RpcClientChannelInactiveListener rpcClientChannelInactiveListener) {
+		
+		this.rpcClientDispatcherHandler = rpcClientDispatcherHandler;
+		this.rpcClientChannelInactiveListener = rpcClientChannelInactiveListener;
+	}
+	
+	
+	/**
+	 * 当连接断开, 触发
+	 */
+	@Override
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		
+		if(rpcClientChannelInactiveListener != null) {
+			rpcClientChannelInactiveListener.onInactive();
 		}
 	}
 	
 	
 	/**
-	 * 注册RpcFuture
-	 * @param id
-	 * @param rpcFuture
+	 * 当从服务器接收到信息, 触发
 	 */
-	public void register(int id, RpcFuture rpcFuture) {
-		invokeIdRpcFutureMap.put(id, rpcFuture);
+	@Override
+	public void channelRead(ChannelHandlerContext ctx, Object msg)
+			throws Exception {
+		
+		//获得返回的RpcResponse对象
+		RpcResponse rpcResponse = (RpcResponse) msg;
+		//交由RpcClientResponseHandler对象进行处理
+		rpcClientDispatcherHandler.addResponse(rpcResponse);
 	}
 	
 	
 	/**
-	 * 添加RpcResponse
-	 * @param rpcResponse
+	 * 发生异常, 触发
 	 */
-	public void addResponse(RpcResponse rpcResponse) {
-		responseQueue.add(rpcResponse);
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+			throws Exception {
+		
+		InfoPrinter.println("客户端发生异常!");
+		cause.printStackTrace();
 	}
+
 	
+	
+
 }
-
-
-
-
-
-

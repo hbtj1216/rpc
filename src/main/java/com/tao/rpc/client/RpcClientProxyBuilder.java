@@ -145,7 +145,7 @@ public class RpcClientProxyBuilder {
 	
 	/**
 	 * 创建代理
-	 * @param targetClass
+	 * @param interfaceClass
 	 * @return
 	 */
 	public static <T> ProxyBuilder<T> create(Class<T> interfaceClass) {

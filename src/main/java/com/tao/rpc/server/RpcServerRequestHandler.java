@@ -1,78 +1,73 @@
 package com.tao.rpc.server;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
-
-import com.tao.rpc.aop.RpcInvokeHook;
+import com.tao.rpc.domain.RpcRequest;
 import com.tao.rpc.domain.RpcRequestWrapper;
+import com.tao.rpc.utils.InfoPrinter;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 
 /**
- * RpcServer端，对收到的RpcRequest进行处理的handler。
- * @author Tao
+ * RpcServer客户端的业务处理类。
+ * 每一个连接的建立对应产生一个RpcServerRequestHandler对象，占用一个线程。
+ * @author tao
  *
  */
 
-public class RpcServerRequestHandler {
+public class RpcServerRequestHandler extends ChannelInboundHandlerAdapter {
 	
-	private Class<?> interfaceClass;		//Class 对象
-	private Object serviceProvider;			//服务提供者
-	private RpcInvokeHook rpcInvokeHook;	//钩子
-	
-	private int threads;	//线程数量
-	private ExecutorService threadPool;	//线程池
-	
-	//任务队列(阻塞队列)
-	private BlockingQueue<RpcRequestWrapper> requestQueue = new LinkedBlockingDeque<>();
-	
+	//RpcServerRequestDispatcher对象引用
+	private RpcServerRequestDispatcher rpcServerRequestDispatcher;
 	
 	//构造函数
-	public RpcServerRequestHandler(
-				Class<?> interfaceClass,
-				Object serviceProvider,
-				int threads,
-				RpcInvokeHook rpcInvokeHook) {
+	public RpcServerRequestHandler(RpcServerRequestDispatcher rpcServerRequestDispatcher) {
+		
+		this.rpcServerRequestDispatcher = rpcServerRequestDispatcher;
+	}
 
-		this.interfaceClass = interfaceClass;
-		this.serviceProvider = serviceProvider;
-		this.threads = threads;
-		this.rpcInvokeHook = rpcInvokeHook;
-	}
-	
 	
 	/**
-	 * 开启线程池，处理RpcRequest请求
+	 * 当本线程对应的RpcServerRequestHandler收到客户端发来的消息时，触发
 	 */
-	public void start() {
-		threadPool = Executors.newFixedThreadPool(threads);
-		for(int i = 0; i < threads; i++) {
-			threadPool.execute(new RpcServerRequestHandlerTask(interfaceClass,
-					serviceProvider, rpcInvokeHook, requestQueue));
-		}
+	@Override
+	public void channelRead(ChannelHandlerContext ctx, Object msg)
+			throws Exception {
+		
+		//获得rpcRequest
+		RpcRequest rpcRequest = (RpcRequest) msg;
+		//将rpcRequest和对应的channel包装起来
+		RpcRequestWrapper rpcRequestWrapper = new RpcRequestWrapper(rpcRequest, ctx.channel());
+		
+		//交给rpcServerRequestHandler中的线程池进行处理
+		rpcServerRequestDispatcher.addRequest(rpcRequestWrapper);
+		
+	}
+
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+			throws Exception {
+		
+		
+	}
+
+
+	@Override
+	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		
+		InfoPrinter.println("一个新的客户端连接到本服务器!");
+	}
+
+
+	@Override
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		InfoPrinter.println("客户端连接关闭!");
 	}
 	
 	
-	/**
-	 * 添加RpcRequest请求到任务队列中
-	 * @param rpcRequestWrapper
-	 */
-	public void addRequest(RpcRequestWrapper rpcRequestWrapper) {
-		try {
-			requestQueue.put(rpcRequestWrapper);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	
 	
 }
-
-
-
-
-
 
 
 
